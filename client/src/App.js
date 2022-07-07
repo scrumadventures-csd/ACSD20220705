@@ -19,8 +19,8 @@ function App() {
 
   const startGame = e => {
     var myRegisterUrl = `${myServerRoot}/api/mbc/register`;
-    console.log (myRegisterUrl);
-    alert (myRegisterUrl);
+//  alert (myRegisterUrl);
+
     axios.get(myRegisterUrl).then(response=>{
       setGameId(response.data.id)
       setGameStarted(true)
@@ -29,8 +29,8 @@ function App() {
 
   const rollOneBall = e => {
     var myRollUrl = `${myServerRoot}/api/mbc/roll?id=${gameId}`;
-    console.log (myRollUrl);
-    alert (myRollUrl);
+//  alert (myRollUrl);
+
     axios.get(myRollUrl).then(response=>{
       setPins(response.data.pins)
       setBallRolled(true)
@@ -38,7 +38,6 @@ function App() {
   }
 
   return (
-
     <div className="App">
       <p></p><p></p>
       <button onClick={startGame}>Start Game</button>
