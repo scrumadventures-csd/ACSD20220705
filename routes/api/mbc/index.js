@@ -22,7 +22,9 @@ router.get("/register", async (req,res) => {
 
         //Cache New Game Object
         mCache.put(id, JSON.stringify(game));
-
+        mCache.put("ballInFrame", 0);
+        mCache.put("frameNumber", 1);
+        mCache.put("totalInFrame", 0);
         res.json({ id });
     } 
     catch (err) {
@@ -37,8 +39,26 @@ router.get("/register", async (req,res) => {
 router.get("/roll", async (req, res) => {
     try {
         let counter = 0;
+        let ballInFrame = mCache.get("ballInFrame");
+        let totalInframe = mCache.get("totalInFrame");
+        let frameNumber = mCache.get("frameNumber");
+        ballInFrame = ballInFrame +1;
         let myPins = await getRoll(req.query.id);
-  
+       console.log("ballInFrame =>"+ballInFrame);
+       console.log("totalInframe =>"+totalInframe);
+       console.log("frameNumber=>"+frameNumber);
+        var bullPins="";
+        switch(myPins) {
+            case "X":
+            case "/":
+                bullPins = 10;
+                break;
+            case "-":
+                bullPins = 0;
+                break;
+            default:
+                bullPins = parseInt(myPins);
+        }
         if (myPins == "X") {
             game.addRoll(10);
         }
@@ -51,9 +71,19 @@ router.get("/roll", async (req, res) => {
         else {
             game.addRoll(parseInt(myPins));
         }
-
         let pins = game.getScore();
-        res.json({ pins });
+        totalInframe = totalInframe +bullPins;
+        if(ballInFrame>=2){
+            mCache.put("totalInFrame",0);
+            mCache.put("frameNumber",frameNumber+1);
+            mCache.put("ballInFrame",0);
+        }else{
+            mCache.put("totalInFrame",totalInframe);
+            mCache.put("ballInFrame",ballInFrame);
+        }
+
+        res.json({ pins,frameNumber,ballInFrame,bullPins,myPins,totalInframe});
+
     } 
     catch (err) {
        console.error(err.message);
@@ -88,5 +118,7 @@ router.get("/score/frame", async (req,res) => {
       res.status(500).send("Server: Unable To Get Frame Score");
   }
 });
+
+function isOdd(num) { return num % 2;}
 
 module.exports = router;

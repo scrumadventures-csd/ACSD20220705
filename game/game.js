@@ -44,7 +44,10 @@ class Game {
         this.frames.forEach((e) => score += e.getScore())
         return score;
     }
-  
+
+    getFrameScore(index) {
+        return this.frames[index].getScore();
+    }
   }
   
 
